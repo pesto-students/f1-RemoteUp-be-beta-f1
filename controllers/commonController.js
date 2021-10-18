@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
-const { recruiterAppLogger } = require('../utils/logger');
+const { recruiterAppLogger, jobSeekerAppLogger } = require('../utils/logger');
+const User = require('../models/UserModel');
 
 function validationErrorCheck(req, res, method) {
   const errors = validationResult(req);
@@ -17,4 +18,52 @@ function validationErrorCheck(req, res, method) {
   return true;
 }
 
-module.exports = validationErrorCheck;
+const saveUser = async (userEmailId, userDetails = null) => {
+  const userIdLower = userEmailId.toLowerCase();
+  const userObject = await User.findOne({ userId: userIdLower });
+  if (userDetails) {
+    const {
+      userFName, userLName, userContact, userExp, userLinkedIn,
+      userGitHub, userPortfolio, userWebsite,
+    } = userDetails;
+    if (userObject) {
+      userObject.userFName = userFName;
+      userObject.userLName = userLName;
+      userObject.userContact = userContact;
+      userObject.userExp = userExp;
+      userObject.userLinkedIn = userLinkedIn;
+      userObject.userGitHub = userGitHub;
+      userObject.userPortfolio = userPortfolio;
+      userObject.userWebsite = userWebsite;
+      const userData = await userObject.save();
+      jobSeekerAppLogger('debug', `User with id ${userIdLower} updated successfully with details`);
+      return userData;
+    }
+    const user = new User({
+      userId: userIdLower,
+      userFName,
+      userLName,
+      userContact,
+      userExp,
+      userLinkedIn,
+      userGitHub,
+      userPortfolio,
+      userWebsite,
+    });
+    const userData = await user.save();
+    jobSeekerAppLogger('debug', `User with id ${userIdLower} saved successfully with details`);
+    return userData;
+  }
+  if (userObject) {
+    return userObject;
+  }
+  const user = new User({ userId: userIdLower });
+  const userData = await user.save();
+  jobSeekerAppLogger('debug', `User with id ${userIdLower} saved successfully`);
+  return userData;
+};
+
+module.exports = {
+  validationErrorCheck,
+  saveUser,
+};

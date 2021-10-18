@@ -18,6 +18,9 @@ const UserSchema = mongoose.Schema({
     type: Number,
     // required: true,
   },
+  userExp: {
+    type: Number,
+  },
   userLinkedIn: {
     type: String,
   },
@@ -30,14 +33,14 @@ const UserSchema = mongoose.Schema({
   userWebsite: {
     type: String,
   },
-  saved_jobs: [{
+  savedJobs: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Job',
   }],
-  applied_jobs: [{
+  appliedJobs: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Job',
   }],
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -70,6 +70,10 @@ const JobSchema = mongoose.Schema({
   updatedBy: {
     type: String,
   },
+  applications: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Application',
+  }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Job', JobSchema);

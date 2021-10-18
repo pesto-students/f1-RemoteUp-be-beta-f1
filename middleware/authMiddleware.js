@@ -30,7 +30,21 @@ const checkJwtRecruiter = jwt({
   algorithms: ['RS256'],
 });
 
+const jwtErrorHandler = (err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.json({
+      status: 'FAILURE',
+      payload: {},
+      message: {
+        code: '401',
+        details: 'Unauthorized access',
+      },
+    });
+  } else next();
+};
+
 module.exports = {
   checkJwtJobSeeker,
   checkJwtRecruiter,
+  jwtErrorHandler,
 };

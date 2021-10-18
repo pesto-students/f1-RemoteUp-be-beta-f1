@@ -10,4 +10,10 @@ module.exports = Object.freeze({
   THREE_MONTH: '3-month',
   SIX_MONTH: '6-month',
   ONE_YEAR: 'year',
+  APPLIED: 'applied',
+  REJECTED: 'rejected',
+  L1: 'l1',
+  L2: 'l2',
+  HR: 'hr',
+  SELECTED: 'selected',
 });

@@ -16,7 +16,7 @@ app.use(express.json());
 // Define routers or controllers
 // app.use('/auth', require('./controllers/authControllers/authController'));
 app.use('/jobseeker/job', require('./controllers/jobseekerContollers/manageJob'));
-// app.use('/recruiter/applicants', require('./controllers/recruiterContollers/manageApplicants'));
+app.use('/recruiter/applicants', require('./controllers/recruiterContollers/manageApplicants'));
 app.use('/recruiter/job', require('./controllers/recruiterContollers/manageJob'));
 // app.use('/notify', require('./controllers/notificationControllers/notifyController'));
 

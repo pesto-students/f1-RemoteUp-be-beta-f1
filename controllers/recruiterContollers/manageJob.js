@@ -9,10 +9,10 @@
 
 const express = require('express');
 const { check } = require('express-validator');
-const { checkJwtRecruiter } = require('../../middleware/authMiddleware');
+const { checkJwtRecruiter, jwtErrorHandler } = require('../../middleware/authMiddleware');
 const extractEmailPayload = require('../../middleware/userEmailMiddleware');
 const Job = require('../../models/JobModel');
-const validationErrorCheck = require('../commonController');
+const { validationErrorCheck } = require('../commonController');
 const { recruiterAppLogger } = require('../../utils/logger');
 const {
   SFW_DEV, CUST_SERV, MKT, FT, PT, ATS, URL, ONE_MONTH, THREE_MONTH, SIX_MONTH, ONE_YEAR,
@@ -35,12 +35,12 @@ request body: {{
     "companyWebsite": "https://www.abccompany.com",
     "companyTagline": "Lorem ipsum dolor sit amet",
     "companyLogo": "https://www.xyz.com/file/",
-    "companyBillingEmail": "abc@company.com",
     "companyAbout": "Lorem ipsum dolor sit amet",
     "plan": "3-month",
 }} */
 router.post('/postjob', [
   checkJwtRecruiter,
+  jwtErrorHandler,
   extractEmailPayload,
   check('position', 'Please add position').notEmpty(),
   check('category', 'Please add category').isIn([SFW_DEV, CUST_SERV, MKT]),
@@ -54,7 +54,6 @@ router.post('/postjob', [
   check('companyWebsite', 'Invalid URL').isURL(),
   check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
   check('companyLogo', 'Please attach company logo').isURL(), // BE should store image
-  check('companyBillingEmail', 'Invalid email address').isEmail(),
   check('companyAbout', 'Invalid company about').optional().notEmpty(),
   check('plan', 'Invalid plan').isIn([ONE_MONTH, THREE_MONTH, SIX_MONTH, ONE_YEAR]),
 ], async (req, res) => {
@@ -63,7 +62,7 @@ router.post('/postjob', [
     const { user } = req;
     const {
       position, category, jobType, salary, candidateRegion, applyType, jobDescription,
-      companyName, companyWebsite, companyTagline, companyLogo, companyBillingEmail, companyAbout,
+      companyName, companyWebsite, companyTagline, companyLogo, companyAbout,
       plan,
     } = req.body;
 
@@ -86,7 +85,6 @@ router.post('/postjob', [
       companyWebsite,
       companyTagline,
       companyLogo,
-      companyBillingEmail,
       companyAbout,
       plan,
       createdBy: user,
@@ -130,12 +128,12 @@ request body: {{
     "companyWebsite": "https://www.abccompany.com",
     "companyTagline": "Lorem ipsum dolor sit amet",
     "companyLogo": "https://www.xyz.com/file/",
-    "companyBillingEmail": "abc@company.com",
     "companyAbout": "Lorem ipsum dolor sit amet",
     "plan": "3-month",
 }} */
 router.patch('/editjob/:id', [
   checkJwtRecruiter,
+  jwtErrorHandler,
   extractEmailPayload,
   check('position', 'Please add position').optional().notEmpty(),
   check('category', 'Please add category').optional().isIn([SFW_DEV, CUST_SERV, MKT]),
@@ -149,7 +147,6 @@ router.patch('/editjob/:id', [
   check('companyWebsite', 'Invalid URL').optional().isURL(),
   check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
   check('companyLogo', 'Please attach company logo').optional().isURL(), // BE should store image
-  check('companyBillingEmail', 'Invalid email address').optional().isEmail(),
   check('companyAbout', 'Invalid company about').optional().notEmpty(),
   check('plan', 'Invalid plan').optional().isIn([ONE_MONTH, THREE_MONTH, SIX_MONTH, ONE_YEAR]),
 ], async (req, res) => {
@@ -158,7 +155,7 @@ router.patch('/editjob/:id', [
     const { user } = req;
     const {
       position, category, jobType, salary, candidateRegion, applyType, applyURL, jobDescription,
-      companyName, companyWebsite, companyTagline, companyLogo, companyBillingEmail, companyAbout,
+      companyName, companyWebsite, companyTagline, companyLogo, companyAbout,
       plan,
     } = req.body;
 
@@ -200,7 +197,6 @@ router.patch('/editjob/:id', [
     if (companyWebsite) job.companyWebsite = companyWebsite;
     if (companyTagline) job.companyTagline = companyTagline;
     if (companyLogo) job.companyLogo = companyLogo;
-    if (companyBillingEmail) job.companyBillingEmail = companyBillingEmail;
     if (companyAbout) job.companyAbout = companyAbout;
     if (plan) job.plan = plan;
     job.updatedBy = user;
@@ -233,6 +229,7 @@ http://127.0.0.1:8000/recruiter/job/activatedeactivatejob/6159622cce9274eec27b3a
 */
 router.patch('/activatedeactivatejob/:id', [
   checkJwtRecruiter,
+  jwtErrorHandler,
   extractEmailPayload,
 ], async (req, res) => {
   try {
@@ -265,13 +262,19 @@ router.patch('/activatedeactivatejob/:id', [
     job.updatedBy = user;
     job.active = !job.active;
     await job.save();
-    recruiterAppLogger('debug', `Job with position ${job.position} activated/deactivated successfully by ${job.updatedBy}`);
+    let msg;
+    if (job.active) {
+      msg = 'activated';
+    } else {
+      msg = 'deactivated';
+    }
+    recruiterAppLogger('debug', `Job with position ${job.position} ${msg} successfully by ${job.updatedBy}`);
     res.json({
       status: 'SUCCESS',
       payload: {},
       message: {
         code: '200',
-        details: 'Job activated/deactivated successfully',
+        details: `Job ${msg} successfully`,
       },
     });
   } catch (err) {
@@ -292,6 +295,7 @@ http://127.0.0.1:8000/recruiter/job/deletejob/6159622cce9274eec27b3a99
 */
 router.delete('/deletejob/:id', [
   checkJwtRecruiter,
+  jwtErrorHandler,
   extractEmailPayload,
 ], async (req, res) => {
   try {
@@ -373,6 +377,7 @@ http://127.0.0.1:8000/recruiter/job/viewjob/615af78f535b7cc7a1fd0eee
 */
 router.get('/viewjob/:id', [
   checkJwtRecruiter,
+  jwtErrorHandler,
   extractEmailPayload,
 ], async (req, res) => {
   try {
@@ -430,6 +435,7 @@ http://127.0.0.1:8000/recruiter/job/viewjobs
 */
 router.get('/viewjobs', [
   checkJwtRecruiter,
+  jwtErrorHandler,
   extractEmailPayload,
 ], async (req, res) => {
   try {
