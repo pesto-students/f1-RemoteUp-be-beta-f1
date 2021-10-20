@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const con = require('./utils/databaseConfig');
+var cors = require("cors");
 // const { httpLogger } = require('./utils/logger');
 
 // Databse connection
@@ -10,6 +11,7 @@ con.on('open', () => {
 
 // Express setup
 const app = express();
+app.use(cors());
 app.use(express.json());
 // app.use(httpLogger);
 
