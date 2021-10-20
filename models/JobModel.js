@@ -14,7 +14,7 @@ const JobSchema = mongoose.Schema({
     required: true,
   },
   jobType: {
-    type: String, // Full-Time/Part-Time
+    type: String, // Full-Time/Part-Time/Internship
     required: true,
   },
   salary: {
@@ -24,10 +24,10 @@ const JobSchema = mongoose.Schema({
     type: String,
   },
   applyType: {
-    type: String, // ATS/URL
+    type: String, // ATS/URL/EMAIL
     required: true,
   },
-  applyURL: {
+  applyValue: { //UPDATED
     type: String,
   },
   jobDescription: {
@@ -46,14 +46,14 @@ const JobSchema = mongoose.Schema({
     type: String,
   },
   companyLogo: {
-    type: String, // path
+    type: String, // base64 value for now - no path
     required: true,
   },
-  companyAbout: {
+  companyDescription: { // UPDATED
     type: String,
   },
-  plan: {
-    type: String, // 1-month, 3-month, 6-month, year
+  planType: { // UPDATED
+    type: String, // 1-Month, 2-Month, 3-Month
     required: true,
   },
   dateOfPurchase: {
