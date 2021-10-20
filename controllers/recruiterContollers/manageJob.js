@@ -15,7 +15,7 @@ const Job = require('../../models/JobModel');
 const { validationErrorCheck } = require('../commonController');
 const { recruiterAppLogger } = require('../../utils/logger');
 const {
-  SFW_DEV, CUST_SERV, MKT, FT, PT, ATS, URL, ONE_MONTH, THREE_MONTH, SIX_MONTH, ONE_YEAR,
+  SFW_DEV, CUST_SERV, MKT, FT, PT, INTERN, ATS, URL, EMAIL, ONE_MONTH, TWO_MONTH, THREE_MONTH, SIX_MONTH, ONE_YEAR,
 } = require('../../utils/constants');
 
 const router = express.Router();
@@ -44,32 +44,32 @@ router.post('/postjob', [
   extractEmailPayload,
   check('position', 'Please add position').notEmpty(),
   check('category', 'Please add category').isIn([SFW_DEV, CUST_SERV, MKT]),
-  check('jobType', 'Invalid Job type').isIn([FT, PT]),
-  check('salary', 'Please add valid salary').optional().isNumeric(),
-  check('candidateRegion', 'Please add valid candidate region').optional().notEmpty(),
-  check('applyType', 'Invalid apply type').isIn([ATS, URL]),
-  check('applyURL', 'Invalid URL').optional().isURL(),
+  check('jobType', 'Invalid Job type').isIn([FT, PT, INTERN]),
+  // check('salary', 'Please add valid salary').optional().isNumeric(),
+  // check('candidateRegion', 'Please add valid candidate region').optional().notEmpty(),
+  check('applyType', 'Invalid apply type').isIn([ATS, URL, EMAIL]),
+  // check('applyValue', 'Invalid URL').optional().isURL(),
   check('jobDescription', 'Please add job description').notEmpty(),
   check('companyName', 'Please add company name').notEmpty(),
   check('companyWebsite', 'Invalid URL').isURL(),
-  check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
-  check('companyLogo', 'Please attach company logo').isURL(), // BE should store image
-  check('companyAbout', 'Invalid company about').optional().notEmpty(),
-  check('plan', 'Invalid plan').isIn([ONE_MONTH, THREE_MONTH, SIX_MONTH, ONE_YEAR]),
+  // check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
+  check('companyLogo', 'Please attach company logo').notEmpty(), // .isURL(), // BE should store image
+  // check('companyDescription', 'Invalid company about').optional().notEmpty(),
+  check('planType', 'Invalid plan').isIn([ONE_MONTH, TWO_MONTH, THREE_MONTH]),
 ], async (req, res) => {
   try {
     validationErrorCheck(req, res, 'postjob');
     const { user } = req;
     const {
       position, category, jobType, salary, candidateRegion, applyType, jobDescription,
-      companyName, companyWebsite, companyTagline, companyLogo, companyAbout,
-      plan,
+      companyName, companyWebsite, companyTagline, companyLogo, companyDescription,
+      planType,
     } = req.body;
 
-    let { applyURL } = req.body;
+    let { applyValue } = req.body;
 
     if (applyType === 'ATS') {
-      applyURL = '';
+      applyValue = '';
     }
 
     const job = new Job({
@@ -79,14 +79,14 @@ router.post('/postjob', [
       salary,
       candidateRegion,
       applyType,
-      applyURL,
+      applyValue,
       jobDescription,
       companyName,
       companyWebsite,
       companyTagline,
       companyLogo,
-      companyAbout,
-      plan,
+      companyDescription,
+      planType,
       createdBy: user,
     });
 
