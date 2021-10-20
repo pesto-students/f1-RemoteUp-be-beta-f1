@@ -27,7 +27,7 @@ const JobSchema = mongoose.Schema({
     type: String, // ATS/URL/EMAIL
     required: true,
   },
-  applyValue: { //UPDATED
+  applyValue: { // UPDATED
     type: String,
   },
   jobDescription: {

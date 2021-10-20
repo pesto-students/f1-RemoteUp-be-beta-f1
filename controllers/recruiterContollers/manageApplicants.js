@@ -130,8 +130,7 @@ router.get('/viewapplications', [
   // extractEmailPayload,
 ], async (req, res) => {
   try {
-    // const { user } = req;
-    const user = 'mbhupendrads@gmail.com';
+    const { user } = req;
     let { pageNo, perPage } = req.query;
     pageNo = Math.abs(parseInt(pageNo, 10));
     perPage = Math.abs(parseInt(perPage, 10));
@@ -140,7 +139,7 @@ router.get('/viewapplications', [
         const ids = jobs.map((job) => job._id);
 
         Application.find({ jobId: { $in: ids } })
-          // .select(['-plan', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
+          // .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
           .limit(perPage)
           .skip(perPage * (pageNo - 1))
           .exec((err1, applications) => {

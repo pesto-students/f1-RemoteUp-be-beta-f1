@@ -50,7 +50,7 @@ router.get('/viewjobs/:category/', [
 
       totalJobs = await Job.find(filterQuery).count();
       jobData = await Job.find(filterQuery)
-        .select(['-plan', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy', 'applications'])
+        .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy', 'applications'])
         .sort([['updatedAt', -1]]).limit(perPage)
         .skip(perPage * (pageNo - 1))
         .catch((err) => {
@@ -69,7 +69,7 @@ router.get('/viewjobs/:category/', [
     } else {
       totalJobs = await Job.find({ active: true, category }).count();
       jobData = await Job.find({ active: true, category })
-        .select(['-plan', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
+        .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
         .limit(perPage)
         .skip(perPage * (pageNo - 1))
         .catch((err) => {
@@ -125,7 +125,7 @@ router.get('/homejobs', [
         { $sort: { category: 1, createdAt: -1 } },
         {
           $project: {
-            plan: 0,
+            planType: 0,
             dateOfPurchase: 0,
             dateOfExpiry: 0,
             createdBy: 0,
@@ -365,7 +365,7 @@ router.get('/viewsavedjobs/', [
           skip: perPage * (pageNo - 1),
         },
         select: {
-          plan: 0,
+          planType: 0,
           dateOfPurchase: 0,
           dateOfExpiry: 0,
           createdBy: 0,
@@ -446,7 +446,7 @@ router.get('/viewappliedjobs/', [
           skip: perPage * (pageNo - 1),
         },
         select: {
-          plan: 0,
+          planType: 0,
           dateOfPurchase: 0,
           dateOfExpiry: 0,
           createdBy: 0,

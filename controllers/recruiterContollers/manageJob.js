@@ -30,14 +30,14 @@ request body: {{
     "salary": "",
     "candidateRegion": "",
     "applyType": "URL",
-    "applyURL": "abc@xyz.com",
+    "applyValue": "abc@xyz.com",
     "jobDessription": "Lorem ipsum dolor sit amet",
     "companyName": "ABC CO.",
     "companyWebsite": "https://www.abccompany.com",
     "companyTagline": "Lorem ipsum dolor sit amet",
     "companyLogo": "https://www.xyz.com/file/",
-    "companyAbout": "Lorem ipsum dolor sit amet",
-    "plan": "3-month",
+    "companyDescription": "Lorem ipsum dolor sit amet",
+    "planType": "3-month",
 }} */
 router.post('/postjob', [
   checkJwtRecruiter,
@@ -56,7 +56,7 @@ router.post('/postjob', [
   // check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
   check('companyLogo', 'Please attach company logo').notEmpty(), // .isURL(), // BE should store image
   // check('companyDescription', 'Invalid company about').optional().notEmpty(),
-  check('planType', 'Invalid plan').isIn([ONE_MONTH, TWO_MONTH, THREE_MONTH]),
+  check('planType', 'Invalid planType').isIn([ONE_MONTH, TWO_MONTH, THREE_MONTH]),
 ], async (req, res) => {
   try {
     validationErrorCheck(req, res, 'postjob');
@@ -123,14 +123,14 @@ request body: {{
     "salary": "",
     "candidateRegion": "",
     "applyType": "URL",
-    "applyURL": "abc@xyz.com",
+    "applyValue": "abc@xyz.com",
     "jobDessription": "Lorem ipsum dolor sit amet",
     "companyName": "ABC CO.",
     "companyWebsite": "https://www.abccompany.com",
     "companyTagline": "Lorem ipsum dolor sit amet",
     "companyLogo": "https://www.xyz.com/file/",
-    "companyAbout": "Lorem ipsum dolor sit amet",
-    "plan": "3-month",
+    "companyDescription": "Lorem ipsum dolor sit amet",
+    "planType": "3-month",
 }} */
 router.patch('/editjob/:id', [
   checkJwtRecruiter,
@@ -139,25 +139,25 @@ router.patch('/editjob/:id', [
   check('position', 'Please add position').optional().notEmpty(),
   check('category', 'Please add category').optional().isIn([SFW_DEV, CUST_SERV, MKT]),
   check('jobType', 'Invalid Job type').optional().isIn([FT, PT]),
-  check('salary', 'Please add valid salary').optional().isNumeric(),
-  check('candidateRegion', 'Please add valid candidate region').optional().notEmpty(),
+  // check('salary', 'Please add valid salary').optional().isNumeric(),
+  // check('candidateRegion', 'Please add valid candidate region').optional().notEmpty(),
   check('applyType', 'Invalid apply type').optional().isIn([ATS, URL]),
-  check('applyURL', 'Invalid URL').optional().isURL(),
+  // check('applyValue', 'Invalid URL').optional().isURL(),
   check('jobDescription', 'Please add job description').optional().notEmpty(),
   check('companyName', 'Please add company name').optional().notEmpty(),
   check('companyWebsite', 'Invalid URL').optional().isURL(),
-  check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
+  // check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
   check('companyLogo', 'Please attach company logo').optional().isURL(), // BE should store image
-  check('companyAbout', 'Invalid company about').optional().notEmpty(),
-  check('plan', 'Invalid plan').optional().isIn([ONE_MONTH, TWO_MONTH, THREE_MONTH, SIX_MONTH]),
+  // check('companyDescription', 'Invalid company about').optional().notEmpty(),
+  check('planType', 'Invalid planType').optional().isIn([ONE_MONTH, TWO_MONTH, THREE_MONTH, SIX_MONTH]),
 ], async (req, res) => {
   try {
     validationErrorCheck(req, res, 'editjob');
     const { user } = req;
     const {
-      position, category, jobType, salary, candidateRegion, applyType, applyURL, jobDescription,
-      companyName, companyWebsite, companyTagline, companyLogo, companyAbout,
-      plan,
+      position, category, jobType, salary, candidateRegion, applyType, applyValue, jobDescription,
+      companyName, companyWebsite, companyTagline, companyLogo, companyDescription,
+      planType,
     } = req.body;
 
     const job = await Job.findById(req.params.id).catch((err) => {
@@ -192,14 +192,14 @@ router.patch('/editjob/:id', [
     if (salary) job.salary = salary;
     if (candidateRegion) job.candidateRegion = candidateRegion;
     if (applyType) job.applyType = applyType;
-    if (applyURL) job.applyURL = applyURL;
+    if (applyValue) job.applyValue = applyValue;
     if (jobDescription) job.jobDescription = jobDescription;
     if (companyName) job.companyName = companyName;
     if (companyWebsite) job.companyWebsite = companyWebsite;
     if (companyTagline) job.companyTagline = companyTagline;
     if (companyLogo) job.companyLogo = companyLogo;
-    if (companyAbout) job.companyAbout = companyAbout;
-    if (plan) job.plan = plan;
+    if (companyDescription) job.companyDescription = companyDescription;
+    if (planType) job.planType = planType;
     job.updatedBy = user;
 
     await job.save();
