@@ -17,7 +17,7 @@ const { saveUser } = require('../commonController');
 const { validationErrorCheck } = require('../commonController');
 const { jobSeekerAppLogger } = require('../../utils/logger');
 const {
-  APPLIED, REJECTED, L1, L2, HR, SELECTED,
+  APPLIED,
 } = require('../../utils/constants');
 
 const router = express.Router();
@@ -26,12 +26,12 @@ const router = express.Router();
 http://127.0.0.1:8000/jobseeker/job/viewjobs/Software Development/?pageNo=1&perPage=2&searchKey=software
 */
 router.get('/viewjobs/:category/', [
-  checkJwtJobSeeker,
-  jwtErrorHandler,
-  extractEmailPayload,
+  // checkJwtJobSeeker,
+  // jwtErrorHandler,
+  // extractEmailPayload,
 ], async (req, res) => {
   try {
-    const { user } = req;
+    // const { user } = req;
     let { pageNo, perPage, searchKey } = req.query;
     pageNo = Math.abs(parseInt(pageNo, 10));
     perPage = Math.abs(parseInt(perPage, 10));
@@ -89,7 +89,7 @@ router.get('/viewjobs/:category/', [
 
     const totalPages = Math.ceil(totalJobs / perPage);
 
-    jobSeekerAppLogger('debug', `Jobs viewed successfully by ${user}`);
+    // jobSeekerAppLogger('debug', `Jobs viewed successfully by ${user}`);
     res.json({
       status: 'SUCCESS',
       payload: { jobData, totalPages },
@@ -246,9 +246,9 @@ router.patch('/saveunsavejob/:id', [
 http://127.0.0.1:8000/jobseeker/job/applyjob/6159622cce9274eec27b3a99
 */
 router.patch('/applyjob/:id', [
-  // checkJwtJobSeeker,
-  // jwtErrorHandler,
-  // extractEmailPayload,
+  checkJwtJobSeeker,
+  jwtErrorHandler,
+  extractEmailPayload,
   check('userFName', 'Please add First Name').notEmpty(),
   check('userLName', 'Please add Last Name').notEmpty(),
   check('userContact', 'Please add valid Contact Number').isNumeric(),
@@ -260,8 +260,7 @@ router.patch('/applyjob/:id', [
 ], async (req, res) => {
   try {
     validationErrorCheck(req, res, 'applyjob');
-    // const { user } = req;
-    const user = "mbhupendrads@gmail.com";
+    const { user } = req;
     const jobId = req.params.id;
     const userDetails = req.body;
     const job = await Job.findById(jobId).catch((err) => {

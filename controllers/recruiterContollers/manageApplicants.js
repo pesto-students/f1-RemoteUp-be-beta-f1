@@ -1,13 +1,14 @@
 /* eslint-disable consistent-return */
 // Update Applicant Status
-// View all Applicants with sort applied-time/experience, pagination, filter
 // Add a Note for Applicant
+// View all Applicants with sort applied-time/experience, pagination, filter
 
 const express = require('express');
 const { check } = require('express-validator');
 const { checkJwtRecruiter, jwtErrorHandler } = require('../../middleware/authMiddleware');
 const extractEmailPayload = require('../../middleware/userEmailMiddleware');
 const Application = require('../../models/ApplicationModel');
+const Job = require('../../models/JobModel');
 const { validationErrorCheck } = require('../commonController');
 const { recruiterAppLogger } = require('../../utils/logger');
 const {
@@ -70,7 +71,7 @@ router.patch('/updateappstatus/:appId', [
 });
 
 /* Write a note on an application by Recruiter after login-in
-http://127.0.0.1:8000/recruiter/applicants/updatenote/6169b89d34f1bc10acc748d5
+http://127.0.0.1:8000/recruiter/applicants/updatenote/616bc20bc5b2db3310e3d5a4
 */
 router.patch('/updatenote/:appId', [
   checkJwtRecruiter,
@@ -115,6 +116,66 @@ router.patch('/updatenote/:appId', [
       message: {
         code: '500',
         details: 'Not able to update note server error',
+      },
+    });
+  }
+});
+
+/* View all Applications by Recruiter after login-in
+http://127.0.0.1:8000/recruiter/applicants/viewapplications
+*/
+router.get('/viewapplications', [
+  // checkJwtRecruiter,
+  // jwtErrorHandler,
+  // extractEmailPayload,
+], async (req, res) => {
+  try {
+    // const { user } = req;
+    const user = 'mbhupendrads@gmail.com';
+    let { pageNo, perPage } = req.query;
+    pageNo = Math.abs(parseInt(pageNo, 10));
+    perPage = Math.abs(parseInt(perPage, 10));
+    Job.find({ createdBy: user }, { _id: 1 }, (err, jobs) => {
+      if (!err) {
+        const ids = jobs.map((job) => job._id);
+
+        Application.find({ jobId: { $in: ids } })
+          // .select(['-plan', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
+          .limit(perPage)
+          .skip(perPage * (pageNo - 1))
+          .exec((err1, applications) => {
+            if (err1) {
+              res.json({
+                status: 'FAILURE',
+                payload: {},
+                message: {
+                  code: '500',
+                  details: 'Not able to view saved jobs server error',
+                },
+              });
+            }
+            const totalapps = applications.length;
+            const totalPages = Math.ceil(totalapps / perPage);
+            recruiterAppLogger('error', `Error in viewing jobs Error: ${err}`);
+            res.json({
+              status: 'SUCCESS',
+              payload: { applications, totalPages },
+              message: {
+                code: '200',
+                details: 'Job viewed successfully',
+              },
+            });
+          });
+      }
+    });
+  } catch (err) {
+    recruiterAppLogger('error', `Error occured while viewing Job; Error: ${err.message}`);
+    res.json({
+      status: 'FAILURE',
+      payload: {},
+      message: {
+        code: '500',
+        details: 'Not able to post job server error',
       },
     });
   }

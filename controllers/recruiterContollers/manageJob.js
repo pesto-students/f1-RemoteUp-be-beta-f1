@@ -15,7 +15,7 @@ const Job = require('../../models/JobModel');
 const { validationErrorCheck } = require('../commonController');
 const { recruiterAppLogger } = require('../../utils/logger');
 const {
-  SFW_DEV, CUST_SERV, MKT, FT, PT, ATS, URL, ONE_MONTH, THREE_MONTH, SIX_MONTH, ONE_YEAR,
+  SFW_DEV, CUST_SERV, MKT, FT, PT, ATS, URL, ONE_MONTH, TWO_MONTH, THREE_MONTH, SIX_MONTH,
 } = require('../../utils/constants');
 
 const router = express.Router();
@@ -55,7 +55,7 @@ router.post('/postjob', [
   check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
   check('companyLogo', 'Please attach company logo').isURL(), // BE should store image
   check('companyAbout', 'Invalid company about').optional().notEmpty(),
-  check('plan', 'Invalid plan').isIn([ONE_MONTH, THREE_MONTH, SIX_MONTH, ONE_YEAR]),
+  check('plan', 'Invalid plan').isIn([ONE_MONTH, TWO_MONTH, THREE_MONTH, SIX_MONTH]),
 ], async (req, res) => {
   try {
     validationErrorCheck(req, res, 'postjob');
@@ -148,7 +148,7 @@ router.patch('/editjob/:id', [
   check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
   check('companyLogo', 'Please attach company logo').optional().isURL(), // BE should store image
   check('companyAbout', 'Invalid company about').optional().notEmpty(),
-  check('plan', 'Invalid plan').optional().isIn([ONE_MONTH, THREE_MONTH, SIX_MONTH, ONE_YEAR]),
+  check('plan', 'Invalid plan').optional().isIn([ONE_MONTH, TWO_MONTH, THREE_MONTH, SIX_MONTH]),
 ], async (req, res) => {
   try {
     validationErrorCheck(req, res, 'editjob');

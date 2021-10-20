@@ -13,6 +13,13 @@ const app = express();
 app.use(express.json());
 // app.use(httpLogger);
 
+// cors middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
 // Define routers or controllers
 // app.use('/auth', require('./controllers/authControllers/authController'));
 app.use('/jobseeker/job', require('./controllers/jobseekerContollers/manageJob'));
