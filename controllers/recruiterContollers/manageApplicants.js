@@ -123,6 +123,7 @@ router.patch('/updatenote/:appId', [
 
 /* View all Applications by Recruiter after login-in
 http://127.0.0.1:8000/recruiter/applicants/viewapplications
+applied-time/experience, filter
 */
 router.get('/viewapplications', [
   // checkJwtRecruiter,

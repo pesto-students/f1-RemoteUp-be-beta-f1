@@ -50,8 +50,9 @@ router.get('/viewjobs/:category/', [
 
       totalJobs = await Job.find(filterQuery).count();
       jobData = await Job.find(filterQuery)
-        .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy', 'applications'])
-        .sort([['updatedAt', -1]]).limit(perPage)
+        .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy', '-applications'])
+        .sort([['updatedAt', -1]])
+        .limit(perPage)
         .skip(perPage * (pageNo - 1))
         .catch((err) => {
           if (err) {
@@ -69,7 +70,7 @@ router.get('/viewjobs/:category/', [
     } else {
       totalJobs = await Job.find({ active: true, category }).count();
       jobData = await Job.find({ active: true, category })
-        .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
+        .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy', '-applications'])
         .limit(perPage)
         .skip(perPage * (pageNo - 1))
         .catch((err) => {
@@ -122,7 +123,7 @@ router.get('/homejobs', [
     const jobData = await Job.aggregate(
       [
         { $match: { active: true } },
-        { $sort: { category: 1, createdAt: -1 } },
+        { $sort: { category: -1, createdAt: -1 } }, // {category: []}
         {
           $project: {
             planType: 0,
@@ -262,7 +263,10 @@ router.patch('/applyjob/:id', [
     validationErrorCheck(req, res, 'applyjob');
     const { user } = req;
     const jobId = req.params.id;
-    const userDetails = req.body;
+    const {
+      userFName, userLName, userContact, userExp,
+      userLinkedIn, userGitHub, userPortfolio, userWebsite,
+    } = req.body;
     const job = await Job.findById(jobId).catch((err) => {
       if (err) {
         jobSeekerAppLogger('error', `No Job with ID ${jobId} save/unsave a job failed with Error: ${err}`);
@@ -277,7 +281,7 @@ router.patch('/applyjob/:id', [
       }
     });
 
-    const userObject = await saveUser(user, userDetails);
+    const userObject = await saveUser(user);
     const isJobApplied = userObject.appliedJobs.includes(jobId);
     const isJobActive = job.active;
     if (isJobApplied || !isJobActive) {
@@ -294,6 +298,14 @@ router.patch('/applyjob/:id', [
     const application = new Application({
       userId: user.toLowerCase(),
       jobId,
+      userFName,
+      userLName,
+      userContact,
+      userExp,
+      userLinkedIn,
+      userGitHub,
+      userPortfolio,
+      userWebsite,
       // resume,
       applicationStatus: APPLIED,
       statusUpdatedBy: user.toLowerCase(),

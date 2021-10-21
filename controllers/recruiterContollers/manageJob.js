@@ -31,13 +31,16 @@ request body: {{
     "candidateRegion": "",
     "applyType": "URL",
     "applyValue": "abc@xyz.com",
-    "jobDessription": "Lorem ipsum dolor sit amet",
+    "jobDescription": "Lorem ipsum dolor sit amet",
+    "jobDescriptionState": {"name": "something", "add": "lorem"},
     "companyName": "ABC CO.",
     "companyWebsite": "https://www.abccompany.com",
     "companyTagline": "Lorem ipsum dolor sit amet",
     "companyLogo": "https://www.xyz.com/file/",
+    "companyDescriptionState": {"name": "something", "add": "lorem"},
+    "logoFile": {"name": "File1", "size": "123Kb"},
     "companyDescription": "Lorem ipsum dolor sit amet",
-    "planType": "3-month",
+    "planType": "3 Month",
 }} */
 router.post('/postjob', [
   checkJwtRecruiter,
@@ -63,8 +66,8 @@ router.post('/postjob', [
     const { user } = req;
     const {
       position, category, jobType, salary, candidateRegion, applyType, jobDescription,
-      companyName, companyWebsite, companyTagline, companyLogo, companyDescription,
-      planType,
+      companyName, companyWebsite, companyTagline, companyLogo, logoFile, companyDescription,
+      planType, jobDescriptionState, companyDescriptionState,
     } = req.body;
 
     let { applyValue } = req.body;
@@ -86,8 +89,11 @@ router.post('/postjob', [
       companyWebsite,
       companyTagline,
       companyLogo,
+      logoFile,
       companyDescription,
       planType,
+      jobDescriptionState,
+      companyDescriptionState,
       createdBy: user,
     });
 
@@ -124,11 +130,14 @@ request body: {{
     "candidateRegion": "",
     "applyType": "URL",
     "applyValue": "abc@xyz.com",
-    "jobDessription": "Lorem ipsum dolor sit amet",
+    "jobDescription": "Lorem ipsum dolor sit amet",
+    "jobDescriptionState": {"name": "something", "add": "lorem"},
     "companyName": "ABC CO.",
     "companyWebsite": "https://www.abccompany.com",
     "companyTagline": "Lorem ipsum dolor sit amet",
     "companyLogo": "https://www.xyz.com/file/",
+    "companyDescriptionState": {"name": "something", "add": "lorem"},
+    "logoFile": {"name": "File1", "size": "123Kb"},
     "companyDescription": "Lorem ipsum dolor sit amet",
     "planType": "3-month",
 }} */
@@ -156,8 +165,8 @@ router.patch('/editjob/:id', [
     const { user } = req;
     const {
       position, category, jobType, salary, candidateRegion, applyType, applyValue, jobDescription,
-      companyName, companyWebsite, companyTagline, companyLogo, companyDescription,
-      planType,
+      companyName, companyWebsite, companyTagline, companyLogo, logoFile, companyDescription,
+      planType, jobDescriptionState, companyDescriptionState,
     } = req.body;
 
     const job = await Job.findById(req.params.id).catch((err) => {
@@ -198,8 +207,11 @@ router.patch('/editjob/:id', [
     if (companyWebsite) job.companyWebsite = companyWebsite;
     if (companyTagline) job.companyTagline = companyTagline;
     if (companyLogo) job.companyLogo = companyLogo;
+    if (logoFile) job.logoFile = logoFile;
     if (companyDescription) job.companyDescription = companyDescription;
     if (planType) job.planType = planType;
+    if (jobDescriptionState) job.jobDescriptionState = jobDescriptionState;
+    if (companyDescriptionState) job.companyDescriptionState = companyDescriptionState;
     job.updatedBy = user;
 
     await job.save();

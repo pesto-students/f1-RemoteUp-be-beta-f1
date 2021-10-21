@@ -34,6 +34,10 @@ const JobSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  jobDescriptionState: {
+    type: Object,
+    // required: true,
+  },
   companyName: {
     type: String,
     required: true,
@@ -45,8 +49,16 @@ const JobSchema = mongoose.Schema({
   companyTagline: {
     type: String,
   },
+  companyDescriptionState: {
+    type: Object, // base64 value for now - no path
+    // required: true,
+  },
   companyLogo: {
     type: String, // base64 value for now - no path
+    required: true,
+  },
+  logoFile: {
+    type: Object, // logo object
     required: true,
   },
   companyDescription: { // UPDATED
