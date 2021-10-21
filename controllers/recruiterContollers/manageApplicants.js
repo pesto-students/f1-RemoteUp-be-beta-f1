@@ -122,13 +122,13 @@ router.patch('/updatenote/:appId', [
 });
 
 /* View all Applications by Recruiter after login-in
-http://127.0.0.1:8000/recruiter/applicants/viewapplications
+http://127.0.0.1:8000/recruiter/applicants/viewapplications/?pageNo=1&perPage=2
 applied-time/experience, filter
 */
 router.get('/viewapplications', [
-  // checkJwtRecruiter,
-  // jwtErrorHandler,
-  // extractEmailPayload,
+  checkJwtRecruiter,
+  jwtErrorHandler,
+  extractEmailPayload,
 ], async (req, res) => {
   try {
     const { user } = req;
@@ -141,6 +141,7 @@ router.get('/viewapplications', [
 
         Application.find({ jobId: { $in: ids } })
           // .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
+          .sort([['userExp', -1], ['updatedAt', -1]])
           .limit(perPage)
           .skip(perPage * (pageNo - 1))
           .exec((err1, applications) => {
@@ -150,32 +151,32 @@ router.get('/viewapplications', [
                 payload: {},
                 message: {
                   code: '500',
-                  details: 'Not able to view saved jobs server error',
+                  details: 'Not able to view applications server error',
                 },
               });
             }
             const totalapps = applications.length;
             const totalPages = Math.ceil(totalapps / perPage);
-            recruiterAppLogger('error', `Error in viewing jobs Error: ${err}`);
+            recruiterAppLogger('error', `Error in viewing applications Error: ${err}`);
             res.json({
               status: 'SUCCESS',
               payload: { applications, totalPages },
               message: {
                 code: '200',
-                details: 'Job viewed successfully',
+                details: 'applications viewed successfully',
               },
             });
           });
       }
     });
   } catch (err) {
-    recruiterAppLogger('error', `Error occured while viewing Job; Error: ${err.message}`);
+    recruiterAppLogger('error', `Error occured while viewing applications; Error: ${err.message}`);
     res.json({
       status: 'FAILURE',
       payload: {},
       message: {
         code: '500',
-        details: 'Not able to post job server error',
+        details: 'Not able to view applications server error',
       },
     });
   }
