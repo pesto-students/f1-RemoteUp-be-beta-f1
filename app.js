@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const con = require('./utils/databaseConfig');
-// const { httpLogger } = require('./utils/logger');
 
 // Databse connection
 con.on('open', () => {
@@ -13,7 +12,6 @@ con.on('open', () => {
 const app = express();
 app.use(cors());
 app.use(express.json());
-// app.use(httpLogger);
 
 // cors middleware
 app.use((req, res, next) => {
@@ -24,6 +22,7 @@ app.use((req, res, next) => {
 
 // Define routers or controllers
 // app.use('/auth', require('./controllers/authControllers/authController'));
+app.use('/public/job', require('./controllers/publicControllers/manageJob'));
 app.use('/jobseeker/job', require('./controllers/jobseekerContollers/manageJob'));
 app.use('/recruiter/applicants', require('./controllers/recruiterContollers/manageApplicants'));
 app.use('/recruiter/job', require('./controllers/recruiterContollers/manageJob'));

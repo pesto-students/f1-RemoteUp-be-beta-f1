@@ -3,7 +3,6 @@
 // Edit a Job
 // Activate/Deactivate a Job
 // Delete a Job
-// View a Job
 // View all Jobs Posted
 // Renew a Job Post
 
@@ -341,19 +340,6 @@ router.delete('/deletejob/:id', [
 
     const dbRes = await job.delete();
 
-    // const job = await Job.findByIdAndDelete(req.params.id).catch((err) => {
-    //   if (err) {
-    //     return res.json({
-    //       status: 'FAILURE',
-    //       payload: {},
-    //       message: {
-    //         code: '400',
-    //         details: 'Not job found to delete',
-    //       },
-    //     });
-    //   }
-    // });
-
     recruiterAppLogger('debug', `Job with ID ${req.params.id} deleted successfully by ${user}`);
     res.json({
       status: 'SUCCESS',
@@ -380,64 +366,6 @@ router.delete('/deletejob/:id', [
       message: {
         code: '500',
         details: 'Not able to delete job server error',
-      },
-    });
-  }
-});
-
-/* View a Job by Recruiter after login-in
-http://127.0.0.1:8000/recruiter/job/viewjob/615af78f535b7cc7a1fd0eee
-*/
-router.get('/viewjob/:id', [
-  checkJwtRecruiter,
-  jwtErrorHandler,
-  extractEmailPayload,
-], async (req, res) => {
-  try {
-    const { user } = req;
-    const jobData = await Job.findById(req.params.id).catch((err) => {
-      if (err) {
-        recruiterAppLogger('error', `No Job with ID ${req.params.id} view a job failed with Error: ${err}`);
-        res.json({
-          status: 'FAILURE',
-          payload: {},
-          message: {
-            code: '400',
-            details: 'No job found to view',
-          },
-        });
-      }
-    });
-
-    if (jobData.createdBy.toLowerCase() !== user) {
-      recruiterAppLogger('error', `User ${user} not authorized to view job`);
-      res.json({
-        status: 'FAILURE',
-        payload: {},
-        message: {
-          code: '500',
-          details: 'User not authorized to view job',
-        },
-      });
-    }
-
-    recruiterAppLogger('debug', `Job with ID ${jobData.id} viewed successfully by ${jobData.createdBy}`);
-    res.json({
-      status: 'SUCCESS',
-      payload: { jobData },
-      message: {
-        code: '200',
-        details: 'Job posted successfully',
-      },
-    });
-  } catch (err) {
-    recruiterAppLogger('error', `Error occured while updating Job; Error: ${err.message}`);
-    res.json({
-      status: 'FAILURE',
-      payload: {},
-      message: {
-        code: '500',
-        details: 'Not able to post job server error',
       },
     });
   }
