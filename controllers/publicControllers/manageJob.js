@@ -96,13 +96,26 @@ router.get('/viewjobs/:category/', async (req, res) => {
 });
 
 /* View Summury of Jobs by public without login-in
-http://127.0.0.1:8000/public/job/homejobs
+http://127.0.0.1:8000/public/job/homejobs/?searchKey=software
 */
-router.get('/homejobs', async (req, res) => {
+router.get('/homejobs/', async (req, res) => {
   try {
+    let { searchKey } = req.query;
+    let filterQuery;
+    if (searchKey) {
+      searchKey = searchKey.toLowerCase();
+      filterQuery = {
+        active: true,
+        $or: [{ position: { $regex: new RegExp(`${searchKey}`, 'i') } },
+          { companyName: { $regex: new RegExp(`${searchKey}`, 'i') } }],
+      };
+    } else {
+      filterQuery = { active: true };
+    }
+
     const jobData = await Job.aggregate(
       [
-        { $match: { active: true } },
+        { $match: filterQuery },
         { $sort: { category: -1, createdAt: -1 } }, // {category: []}
         {
           $project: {

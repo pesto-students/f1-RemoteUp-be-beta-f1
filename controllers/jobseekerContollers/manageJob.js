@@ -199,7 +199,7 @@ router.get('/viewsavedjobs/', [
           { companyName: { $regex: new RegExp(`${searchKey}`, 'i') } }],
       };
     } else {
-      filterQuery = {};
+      filterQuery = { active: true };
     }
 
     const totalJobsQuery = await User.findOne({ userId: user });
