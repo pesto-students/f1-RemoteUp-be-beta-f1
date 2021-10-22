@@ -81,27 +81,30 @@ router.patch('/saveunsavejob/:id', [
 
 /* Apply for a Job by ID by Job-seeker after login-in
 http://127.0.0.1:8000/jobseeker/job/applyjob/6159622cce9274eec27b3a99
+request body: {
+    "fullName": "Rahul Singh",
+    "email": "rahulsingh@gmail.com",
+    "phone": "9865658632",
+    "exp": 4.5,
+    "resume": "#xyz#"
+}
 */
 router.patch('/applyjob/:id', [
   checkJwtJobSeeker,
   jwtErrorHandler,
   extractEmailPayload,
-  check('userFName', 'Please add First Name').notEmpty(),
-  check('userLName', 'Please add Last Name').notEmpty(),
-  check('userContact', 'Please add valid Contact Number').isNumeric(),
-  check('userExp', 'Please add valid Experience').isNumeric(),
-  check('userLinkedIn', 'Invalid LinkedIn URL').optional().isURL(),
-  check('userGitHub', 'Invalid GitHub URL').optional().isURL(),
-  check('userPortfolio', 'Invalid Portfolio URL').optional().isURL(),
-  check('userWebsite', 'Invalid Website URL').optional().isURL(),
+  check('fullName', 'Please add First Name').notEmpty(),
+  check('email', 'Please add valid Email').notEmpty().isURL(),
+  check('phone', 'Please add valid Phone Number').notEmpty(),
+  check('exp', 'Please add valid Experience').notEmpty(),
+  check('resume', 'Please attach resume').notEmpty(),
 ], async (req, res) => {
   try {
     validationErrorCheck(req, res, 'applyjob');
     const { user } = req;
     const jobId = req.params.id;
     const {
-      userFName, userLName, userContact, userExp,
-      userLinkedIn, userGitHub, userPortfolio, userWebsite,
+      fullName, email, phone, exp, resume,
     } = req.body;
     const job = await Job.findById(jobId).catch((err) => {
       if (err) {
@@ -121,6 +124,7 @@ router.patch('/applyjob/:id', [
     const isJobApplied = userObject.appliedJobs.includes(jobId);
     const isJobActive = job.active;
     if (isJobApplied || !isJobActive) {
+      jobSeekerAppLogger('info', `Already applied this job or not active job with ID ${jobId}`);
       return res.json({
         status: 'FAILURE',
         payload: {},
@@ -134,15 +138,11 @@ router.patch('/applyjob/:id', [
     const application = new Application({
       userId: user.toLowerCase(),
       jobId,
-      userFName,
-      userLName,
-      userContact,
-      userExp,
-      userLinkedIn,
-      userGitHub,
-      userPortfolio,
-      userWebsite,
-      // resume,
+      fullName,
+      email,
+      phone,
+      exp,
+      resume,
       applicationStatus: APPLIED,
       statusUpdatedBy: user.toLowerCase(),
     });

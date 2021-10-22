@@ -9,47 +9,29 @@ const ApplicationSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Job',
   },
-  userFName: {
+  fullName: {
     type: String,
-    // required: true,
   },
-  userLName: {
+  email: {
     type: String,
-    // required: true,
   },
-  userContact: {
+  phone: {
+    type: String,
+  },
+  exp: {
     type: Number,
-    // required: true,
-  },
-  userExp: {
-    type: Number,
-  },
-  userLinkedIn: {
-    type: String,
-  },
-  userGitHub: {
-    type: String,
-  },
-  userPortfolio: {
-    type: String,
-  },
-  userWebsite: {
-    type: String,
   },
   resume: {
-    type: String, // path
-    // required: true,
+    type: String,
   },
   applicationStatus: {
     type: String, // applied, rejected, l1, l2, hr, selected
-    // required: true,
   },
   note: {
     type: String,
   },
   statusUpdatedBy: {
     type: String, // appliedBy or Job-manager email-id
-    // required: true,
   },
 }, { timestamps: true });
 

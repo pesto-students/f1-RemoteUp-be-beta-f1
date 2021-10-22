@@ -75,12 +75,19 @@ router.post('/postjob', [
       applyValue = '';
     }
 
+    let candidateRegionUpdated;
+    if (candidateRegion) {
+      candidateRegionUpdated = candidateRegion;
+    } else {
+      candidateRegionUpdated = 'Anywhere in the world';
+    }
+
     const job = new Job({
       position,
       category,
       jobType,
       salary,
-      candidateRegion,
+      candidateRegionUpdated,
       applyType,
       applyValue,
       jobDescription,
@@ -121,7 +128,7 @@ router.post('/postjob', [
 
 /* Update a Job by ID by Recruiter after login-in
 http://127.0.0.1:8000/recruiter/job/editjob/6159622cce9274eec27b3a99
-request body: {{
+request body: {
     "position": "Sr. Software Engineer",
     "category": "Software Development",
     "jobType": "Full-Time",
@@ -139,7 +146,7 @@ request body: {{
     "logoFile": {"name": "File1", "size": "123Kb"},
     "companyDescription": "Lorem ipsum dolor sit amet",
     "planType": "3-month",
-}} */
+} */
 router.patch('/editjob/:id', [
   checkJwtRecruiter,
   jwtErrorHandler,
@@ -385,6 +392,8 @@ router.get('/viewjobs', [
     pageNo = Math.abs(parseInt(pageNo, 10));
     perPage = Math.abs(parseInt(perPage, 10));
 
+    const totalActiveJobs = await Job.find({ createdBy: user, active: true }).count();
+
     const totalJobs = await Job.find({ createdBy: user }).count();
     const totalPages = Math.ceil(totalJobs / perPage);
 
@@ -408,7 +417,7 @@ router.get('/viewjobs', [
     recruiterAppLogger('debug', `Jobs viewed successfully by ${user}`);
     res.json({
       status: 'SUCCESS',
-      payload: { jobData, totalPages },
+      payload: { jobData, totalPages, totalActiveJobs },
       message: {
         code: '200',
         details: 'Job viewed successfully',

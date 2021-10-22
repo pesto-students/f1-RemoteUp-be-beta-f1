@@ -27,7 +27,7 @@ const JobSchema = mongoose.Schema({
     type: String, // ATS/URL/EMAIL
     required: true,
   },
-  applyValue: { // UPDATED
+  applyValue: {
     type: String,
   },
   jobDescription: {
@@ -36,7 +36,6 @@ const JobSchema = mongoose.Schema({
   },
   jobDescriptionState: {
     type: Object,
-    // required: true,
   },
   companyName: {
     type: String,
@@ -50,8 +49,7 @@ const JobSchema = mongoose.Schema({
     type: String,
   },
   companyDescriptionState: {
-    type: Object, // base64 value for now - no path
-    // required: true,
+    type: Object,
   },
   companyLogo: {
     type: String, // base64 value for now - no path
@@ -61,7 +59,7 @@ const JobSchema = mongoose.Schema({
     type: Object, // logo object
     required: true,
   },
-  companyDescription: { // UPDATED
+  companyDescription: {
     type: String,
   },
   planType: { // UPDATED

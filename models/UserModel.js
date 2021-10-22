@@ -6,33 +6,6 @@ const UserSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
-  // userFName: {
-  //   type: String,
-  //   // required: true,
-  // },
-  // userLName: {
-  //   type: String,
-  //   // required: true,
-  // },
-  // userContact: {
-  //   type: Number,
-  //   // required: true,
-  // },
-  // userExp: {
-  //   type: Number,
-  // },
-  // userLinkedIn: {
-  //   type: String,
-  // },
-  // userGitHub: {
-  //   type: String,
-  // },
-  // userPortfolio: {
-  //   type: String,
-  // },
-  // userWebsite: {
-  //   type: String,
-  // },
   savedJobs: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Job',

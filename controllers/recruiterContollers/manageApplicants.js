@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable consistent-return */
 // Update Applicant Status
 // Add a Note for Applicant
@@ -8,7 +9,7 @@ const { check } = require('express-validator');
 const { checkJwtRecruiter, jwtErrorHandler } = require('../../middleware/authMiddleware');
 const extractEmailPayload = require('../../middleware/userEmailMiddleware');
 const Application = require('../../models/ApplicationModel');
-const Job = require('../../models/JobModel');
+// const Job = require('../../models/JobModel');
 const { validationErrorCheck } = require('../commonController');
 const { recruiterAppLogger } = require('../../utils/logger');
 const {
@@ -125,50 +126,47 @@ router.patch('/updatenote/:appId', [
 http://127.0.0.1:8000/recruiter/applicants/viewapplications/?pageNo=1&perPage=2
 applied-time/experience, filter
 */
-router.get('/viewapplications', [
+router.get('/viewapplications/:jobId', [
   checkJwtRecruiter,
   jwtErrorHandler,
   extractEmailPayload,
 ], async (req, res) => {
   try {
     const { user } = req;
+    const { jobId } = req.params;
     let { pageNo, perPage } = req.query;
     pageNo = Math.abs(parseInt(pageNo, 10));
     perPage = Math.abs(parseInt(perPage, 10));
-    Job.find({ createdBy: user }, { _id: 1 }, (err, jobs) => {
-      if (!err) {
-        const ids = jobs.map((job) => job._id);
 
-        Application.find({ jobId: { $in: ids } })
-          // .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
-          .sort([['userExp', -1], ['updatedAt', -1]])
-          .limit(perPage)
-          .skip(perPage * (pageNo - 1))
-          .exec((err1, applications) => {
-            if (err1) {
-              res.json({
-                status: 'FAILURE',
-                payload: {},
-                message: {
-                  code: '500',
-                  details: 'Not able to view applications server error',
-                },
-              });
-            }
-            const totalapps = applications.length;
-            const totalPages = Math.ceil(totalapps / perPage);
-            recruiterAppLogger('error', `Error in viewing applications Error: ${err}`);
-            res.json({
-              status: 'SUCCESS',
-              payload: { applications, totalPages },
-              message: {
-                code: '200',
-                details: 'applications viewed successfully',
-              },
-            });
+    Application.find({ jobId })
+    // .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
+      .sort([['userExp', -1], ['updatedAt', -1]])
+      .limit(perPage)
+      .skip(perPage * (pageNo - 1))
+      .exec((err, applications) => {
+        if (err) {
+          recruiterAppLogger('error', `Error in viewing applications by ${user} Error: ${err}`);
+          return res.json({
+            status: 'FAILURE',
+            payload: {},
+            message: {
+              code: '500',
+              details: 'Not able to view applications server error',
+            },
           });
-      }
-    });
+        }
+        const totalApplications = applications.length;
+        const totalPages = Math.ceil(totalApplications / perPage);
+        recruiterAppLogger('info', `applications viewed by ${user} successfully`);
+        res.json({
+          status: 'SUCCESS',
+          payload: { applications, totalPages, totalApplications },
+          message: {
+            code: '200',
+            details: 'applications viewed successfully',
+          },
+        });
+      });
   } catch (err) {
     recruiterAppLogger('error', `Error occured while viewing applications; Error: ${err.message}`);
     res.json({
@@ -177,6 +175,55 @@ router.get('/viewapplications', [
       message: {
         code: '500',
         details: 'Not able to view applications server error',
+      },
+    });
+  }
+});
+
+/* View one Application by Recruiter after login-in
+http://127.0.0.1:8000/recruiter/applicants/viewapplication/617295174a65f8bf77a55252
+applied-time/experience, filter
+*/
+router.get('/viewapplication/:id', [
+  checkJwtRecruiter,
+  jwtErrorHandler,
+  extractEmailPayload,
+], async (req, res) => {
+  try {
+    const { user } = req;
+    const { id } = req.params;
+
+    Application.findById(id)
+      .exec((err, application) => {
+        if (err) {
+          recruiterAppLogger('error', `Error in viewing application ${id} by ${user} Error: ${err}`);
+          return res.json({
+            status: 'FAILURE',
+            payload: {},
+            message: {
+              code: '500',
+              details: 'Not able to view application server error',
+            },
+          });
+        }
+        recruiterAppLogger('info', `application ${id} viewed by ${user} successfully`);
+        res.json({
+          status: 'SUCCESS',
+          payload: { application },
+          message: {
+            code: '200',
+            details: 'application viewed successfully',
+          },
+        });
+      });
+  } catch (err) {
+    recruiterAppLogger('error', `Error occured while viewing application; Error: ${err.message}`);
+    res.json({
+      status: 'FAILURE',
+      payload: {},
+      message: {
+        code: '500',
+        details: 'Not able to view application server error',
       },
     });
   }
