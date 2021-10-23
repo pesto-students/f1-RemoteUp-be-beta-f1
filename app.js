@@ -1,7 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const cron = require('node-cron');
 const con = require('./utils/databaseConfig');
+const taskJobExpiry = require('./utils/tasks');
 
 // Databse connection
 con.on('open', () => {
@@ -34,3 +36,7 @@ const { PORT } = process.env;
 app.listen(PORT, () => {
   console.log(`server started at ${PORT}`);
 });
+
+// cron-job to mark expired job as inactive at everyday midnight
+// cron.schedule('0 0 0 * * *', () => { taskJobExpiry(); });
+cron.schedule('*/1 * * * *', () => { taskJobExpiry(); });

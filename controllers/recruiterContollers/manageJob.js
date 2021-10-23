@@ -82,6 +82,12 @@ router.post('/postjob', [
       candidateRegionUpdated = 'Anywhere in the world';
     }
 
+    const planInMonths = Number(planType.split(' ')[0]);
+    const planIndays = 30 * planInMonths + 1;
+    const dateOfExpiry = new Date();
+    dateOfExpiry.setDate(dateOfExpiry.getDate() + planIndays);
+    dateOfExpiry.setHours(0, 0, 0, 0);
+
     const job = new Job({
       position,
       category,
@@ -100,6 +106,7 @@ router.post('/postjob', [
       planType,
       jobDescriptionState,
       companyDescriptionState,
+      dateOfExpiry,
       createdBy: user,
     });
 
