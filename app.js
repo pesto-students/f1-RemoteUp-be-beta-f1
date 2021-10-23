@@ -39,4 +39,4 @@ app.listen(PORT, () => {
 
 // cron-job to mark expired job as inactive at everyday midnight
 // cron.schedule('0 0 0 * * *', () => { taskJobExpiry(); });
-cron.schedule('*/1 * * * *', () => { taskJobExpiry(); });
+cron.schedule('*/60 * * * *', () => { taskJobExpiry(); });
