@@ -212,7 +212,7 @@ router.get('/gettotalapplication', [
     date.setDate(date.getDate() - 30);
     date.setHours(0, 0, 0, 0);
 
-    Job.find({ createdBy: user }, { _id: 1 }, (err, jobs) => {
+    Job.find({ createdBy: user.toLowerCase() }, { _id: 1 }, (err, jobs) => {
       if (!err) {
         const ids = jobs.map((job) => job._id);
 

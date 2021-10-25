@@ -11,7 +11,7 @@ const { check } = require('express-validator');
 const { checkJwtRecruiter, jwtErrorHandler } = require('../../middleware/authMiddleware');
 const extractEmailPayload = require('../../middleware/userEmailMiddleware');
 const Job = require('../../models/JobModel');
-const { validationErrorCheck } = require('../commonController');
+const { validationErrorCheck, getLast30Applications } = require('../commonController');
 const { recruiterAppLogger } = require('../../utils/logger');
 const {
   SFW_DEV, CUST_SERV, MKT, FT, PT, INTERN, ATS, URL, EMAIL,
@@ -421,10 +421,14 @@ router.get('/viewjobs', [
         }
       });
 
+    const totalApplication = await getLast30Applications(user);
+
     recruiterAppLogger('debug', `Jobs viewed successfully by ${user}`);
     res.json({
       status: 'SUCCESS',
-      payload: { jobData, totalPages, totalActiveJobs },
+      payload: {
+        jobData, totalPages, totalActiveJobs, totalApplication,
+      },
       message: {
         code: '200',
         details: 'Job viewed successfully',
