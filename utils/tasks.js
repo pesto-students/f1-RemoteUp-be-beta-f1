@@ -1,11 +1,13 @@
 const Job = require('../models/JobModel');
+const { notifyRecruiterJobExpiry } = require('../controllers/notificationControllers/notificationUtils');
 const { taskAppLogger } = require('./logger');
 
 const taskJobExpiry = async () => {
   try {
-    const jobs = await Job.find({ active: true }, {
-      _id: 1, planType: 1, dateOfExpiry: 1, createdAt: 1,
-    });
+    const jobs = await Job.find({ active: true });
+    // const jobs = await Job.find({ active: true }, {
+    //   _id: 1, planType: 1, dateOfExpiry: 1, createdAt: 1,
+    // });
     jobs.forEach(async (job) => {
       const { _id, dateOfExpiry, planType } = job;
       const currentDate = new Date();
@@ -14,6 +16,7 @@ const taskJobExpiry = async () => {
         jobObject.active = false;
         await jobObject.save();
         taskAppLogger('info', `Job with id ${String(_id)} deactivated successfully by cronjob`);
+        notifyRecruiterJobExpiry(job);
       } else if (!dateOfExpiry) {
         const jobObject = await Job.findById(_id).select({ dateOfExpiry: 1 });
         const planInMonths = Number(planType.split(' ')[0]);

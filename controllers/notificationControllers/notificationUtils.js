@@ -1,17 +1,19 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable consistent-return */
 // User application status change notification
-// Recruiter Job renewal notification
+// Recruiter Job expiry notification
 
 const { notificationAppLogger } = require('../../utils/logger');
 const Notification = require('../../models/notificatonModel');
 
-const saveNotification = (notificationObject) => {
+const saveNotification = async (notificationObject) => {
   try {
     const notification = new Notification(notificationObject);
-    const notificationResp = notification.save();
-    notificationAppLogger('info', `Notification object saved sucessfully for application id: ${notificationObject.applicationId}`);
+    const notificationResp = await notification.save();
+    notificationAppLogger('info', `Notification object saved sucessfully with id: ${notificationResp._id}`);
     return notificationResp;
   } catch {
-    notificationAppLogger('error', `Error while saving notification object for application id: ${notificationObject.applicationId}`);
+    notificationAppLogger('error', 'Error while saving notification object');
   }
 };
 
@@ -30,10 +32,30 @@ const notifyUserStatusChange = (status, jobObject, applicationObject) => {
     };
     return saveNotification(notificationObject);
   } catch {
-    notificationAppLogger('error', 'Error while creating notification object');
+    notificationAppLogger('error', 'Error while creating notification object for notifyUserStatusChange');
+  }
+};
+
+const notifyRecruiterJobExpiry = (jobObject) => {
+  try {
+    const {
+      jobId, position, companyName, createdBy,
+    } = jobObject;
+    const notificationText = `Your job with position: ${position} and company name: ${companyName} is expired`;
+    const notificationObject = {
+      recipientId: createdBy,
+      senderId: 'system',
+      notificationType: 'jobExpiry',
+      notificationText,
+      jobId,
+    };
+    return saveNotification(notificationObject);
+  } catch {
+    notificationAppLogger('error', 'Error while creating notification object for notifyRecruiterJobExpiry');
   }
 };
 
 module.exports = {
   notifyUserStatusChange,
+  notifyRecruiterJobExpiry,
 };

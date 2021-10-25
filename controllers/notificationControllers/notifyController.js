@@ -51,8 +51,8 @@ router.get('/countunreadnotifications/', [
 http://127.0.0.1:8000/notify/viewnotifications/?pageNo=1&perPage=2
 */
 router.get('/viewnotifications/', [
-  checkJwtJobSeeker,
-  jwtErrorHandler,
+  // checkJwtJobSeeker,
+  // jwtErrorHandler,
   extractEmailPayload,
 ], async (req, res) => {
   try {
