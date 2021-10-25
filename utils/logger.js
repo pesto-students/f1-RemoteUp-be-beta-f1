@@ -6,6 +6,7 @@ log4js.configure({
     jobSeekerApp: { type: 'file', filename: 'logs/jobSeekerApp.log' },
     publicApp: { type: 'file', filename: 'logs/publicApp.log' },
     taskApp: { type: 'file', filename: 'logs/taskApp.log' },
+    notificationApp: { type: 'file', filename: 'logs/notificationApp.log' },
     out: { type: 'stdout' },
   },
   categories: {
@@ -13,6 +14,7 @@ log4js.configure({
     jobSeekerApp: { appenders: ['jobSeekerApp', 'out'], level: 'debug' },
     publicApp: { appenders: ['publicApp', 'out'], level: 'debug' },
     taskApp: { appenders: ['taskApp', 'out'], level: 'debug' },
+    notificationApp: { appenders: ['notificationApp', 'out'], level: 'debug' },
   },
 });
 
@@ -20,6 +22,7 @@ const recruiterLogger = log4js.getLogger('recruiterApp');
 const jobSeekerLogger = log4js.getLogger('jobSeekerApp');
 const publicLogger = log4js.getLogger('publicApp');
 const taskLogger = log4js.getLogger('taskApp');
+const notificationLogger = log4js.getLogger('notificationApp');
 
 module.exports = {
   recruiterAppLogger(level, text) {
@@ -45,5 +48,11 @@ module.exports = {
     else if (level === 'debug') taskLogger.debug(text);
     else if (level === 'warn') taskLogger.warn(text);
     else if (level === 'error') taskLogger.error(text);
+  },
+  notificationAppLogger(level, text) {
+    if (level === 'info') notificationLogger.info(text);
+    else if (level === 'debug') notificationLogger.debug(text);
+    else if (level === 'warn') notificationLogger.warn(text);
+    else if (level === 'error') notificationLogger.error(text);
   },
 };

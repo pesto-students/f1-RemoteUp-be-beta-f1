@@ -14,6 +14,7 @@ const Application = require('../../models/ApplicationModel');
 const Job = require('../../models/JobModel');
 const { validationErrorCheck } = require('../commonController');
 const { recruiterAppLogger } = require('../../utils/logger');
+const { notifyUserStatusChange } = require('../notificationControllers/notificationUtils');
 const {
   APPLIED, REJECTED, L1, L2, HR, SELECTED,
 } = require('../../utils/constants');
@@ -48,9 +49,24 @@ router.patch('/updateappstatus/:appId', [
         },
       });
     }
+
+    if (application.applicationStatus === status) {
+      return res.json({
+        status: 'FAILURE',
+        payload: {},
+        message: {
+          code: '400',
+          details: `Application is already at same status ${status}`,
+        },
+      });
+    }
+
     application.statusUpdatedBy = user;
     application.applicationStatus = status;
     await application.save();
+
+    notifyUserStatusChange(status, job, application);
+
     recruiterAppLogger('debug', `Application with id ${appId} updated successfully by ${user}`);
     res.json({
       status: 'SUCCESS',
