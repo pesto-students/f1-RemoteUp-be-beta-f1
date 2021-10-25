@@ -28,7 +28,7 @@ app.use('/public/job', require('./controllers/publicControllers/manageJob'));
 app.use('/jobseeker/job', require('./controllers/jobseekerContollers/manageJob'));
 app.use('/recruiter/applicants', require('./controllers/recruiterContollers/manageApplicants'));
 app.use('/recruiter/job', require('./controllers/recruiterContollers/manageJob'));
-// app.use('/notify', require('./controllers/notificationControllers/notifyController'));
+app.use('/notify', require('./controllers/notificationControllers/notifyController'));
 
 // Start the server @ port
 const { PORT } = process.env;
