@@ -288,6 +288,13 @@ router.get('/viewappliedjobs/', [
     User.findOne({ userId: user })
       .populate({
         path: 'appliedJobs',
+        populate: {
+          path: 'applications',
+          match: { userId: user },
+          select: {
+            applicationStatus: 1,
+          },
+        },
         options: {
           sort: { createdAt: -1 },
           limit: perPage,
@@ -298,7 +305,7 @@ router.get('/viewappliedjobs/', [
           dateOfPurchase: 0,
           dateOfExpiry: 0,
           createdBy: 0,
-          applications: 0,
+          // applications: 0,
         },
         match: filterQuery,
       })

@@ -16,7 +16,7 @@ const { validationErrorCheck } = require('../commonController');
 const { recruiterAppLogger } = require('../../utils/logger');
 const { notifyUserStatusChange } = require('../notificationControllers/notificationUtils');
 const {
-  APPLIED, REJECTED, L1, L2, HR, SELECTED,
+  APPLIED, REJECTED, TECHNICAL_TEST, TECHNICAL_INTERVIEW, FINAL_INTERVIEW, SELECTED,
 } = require('../../utils/constants');
 
 const router = express.Router();
@@ -28,7 +28,7 @@ router.patch('/updateappstatus/:appId', [
   checkJwtRecruiter,
   jwtErrorHandler,
   extractEmailPayload,
-  check('status', 'Invalid status').isIn([APPLIED, REJECTED, L1, L2, HR, SELECTED]),
+  check('status', 'Invalid status').isIn([APPLIED, REJECTED, TECHNICAL_TEST, TECHNICAL_INTERVIEW, FINAL_INTERVIEW, SELECTED]),
 ], async (req, res) => {
   try {
     validationErrorCheck(req, res, 'updateappstatus');

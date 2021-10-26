@@ -29,6 +29,7 @@ const ApplicationSchema = mongoose.Schema({
   },
   note: {
     type: String,
+    default: '',
   },
   statusUpdatedBy: {
     type: String, // appliedBy or Job-manager email-id
