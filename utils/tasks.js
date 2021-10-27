@@ -1,6 +1,9 @@
 const Job = require('../models/JobModel');
-const { notifyRecruiterJobExpiry } = require('../controllers/notificationControllers/notificationUtils');
+const { notifyRecruiterJobExpiry, notifyRecruiterPreJobExpiry } = require('../controllers/notificationControllers/notificationUtils');
 const { taskAppLogger } = require('./logger');
+const {
+  JOB_EXPIRY_REMINDER_DAYS,
+} = require('./constants');
 
 const taskJobExpiry = async () => {
   try {
@@ -11,6 +14,10 @@ const taskJobExpiry = async () => {
     jobs.forEach(async (job) => {
       const { _id, dateOfExpiry, planType } = job;
       const currentDate = new Date();
+      const dateOfReminder = dateOfExpiry;
+      dateOfReminder.setDate(dateOfReminder.getDate() - JOB_EXPIRY_REMINDER_DAYS);
+      dateOfReminder.setHours(0, 0, 0, 0);
+
       if (dateOfExpiry && currentDate > dateOfExpiry) {
         const jobObject = await Job.findById(_id).select({ active: 1 });
         jobObject.active = false;
@@ -27,6 +34,8 @@ const taskJobExpiry = async () => {
         jobObject.dateOfExpiry = dateOfExp;
         await jobObject.save();
         taskAppLogger('info', `Job with id ${String(_id)} dateOfExpiry updated successfully by cronjob`);
+      } else if (dateOfExpiry && currentDate === dateOfReminder) {
+        notifyRecruiterPreJobExpiry(job);
       }
     });
   } catch (err) {

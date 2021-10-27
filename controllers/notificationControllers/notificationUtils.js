@@ -5,6 +5,9 @@
 
 const { notificationAppLogger } = require('../../utils/logger');
 const Notification = require('../../models/notificatonModel');
+const {
+  STATUS_CHANGE, JOB_EXPIRY, JOB_EXPIRY_REMINDER,
+} = require('../../utils/constants');
 
 const saveNotification = async (notificationObject) => {
   try {
@@ -25,7 +28,7 @@ const notifyUserStatusChange = (status, jobObject, applicationObject) => {
     const notificationObject = {
       recipientId: userId,
       senderId: statusUpdatedBy,
-      notificationType: 'statusChange',
+      notificationType: STATUS_CHANGE,
       notificationText,
       jobId,
       applicationId: _id,
@@ -45,7 +48,7 @@ const notifyRecruiterJobExpiry = (jobObject) => {
     const notificationObject = {
       recipientId: createdBy,
       senderId: 'system',
-      notificationType: 'jobExpiry',
+      notificationType: JOB_EXPIRY,
       notificationText,
       jobId,
     };
@@ -55,7 +58,27 @@ const notifyRecruiterJobExpiry = (jobObject) => {
   }
 };
 
+const notifyRecruiterPreJobExpiry = (jobObject) => {
+  try {
+    const {
+      jobId, position, companyName, createdBy,
+    } = jobObject;
+    const notificationText = `Your job with position: ${position} and company name: ${companyName} will expire in 3 days`;
+    const notificationObject = {
+      recipientId: createdBy,
+      senderId: 'system',
+      notificationType: JOB_EXPIRY_REMINDER,
+      notificationText,
+      jobId,
+    };
+    return saveNotification(notificationObject);
+  } catch {
+    notificationAppLogger('error', 'Error while creating notification object for notifyRecruiterPreJobExpiry');
+  }
+};
+
 module.exports = {
   notifyUserStatusChange,
   notifyRecruiterJobExpiry,
+  notifyRecruiterPreJobExpiry,
 };

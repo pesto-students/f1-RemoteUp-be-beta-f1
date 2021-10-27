@@ -18,4 +18,8 @@ module.exports = Object.freeze({
   TECHNICAL_INTERVIEW: 'Technical Interview',
   FINAL_INTERVIEW: 'Final Interview',
   SELECTED: 'Selected',
+  STATUS_CHANGE: 'statusChange',
+  JOB_EXPIRY: 'jobExpiry',
+  JOB_EXPIRY_REMINDER: 'jobExpiryReminder',
+  JOB_EXPIRY_REMINDER_DAYS: 3,
 });
