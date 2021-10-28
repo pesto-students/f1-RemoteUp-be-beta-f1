@@ -22,7 +22,7 @@ const router = express.Router();
 
 /* Post a Job by Recruiter after login-in
 http://127.0.0.1:8000/recruiter/job/postjob
-request body: {{
+request body: {
     "position": "Sr. Software Engineer",
     "category": "Software Development",
     "jobType": "Full-Time",
@@ -40,7 +40,7 @@ request body: {{
     "logoFile": {"name": "File1", "size": "123Kb"},
     "companyDescription": "Lorem ipsum dolor sit amet",
     "planType": "3 Month",
-}} */
+} */
 router.post('/postjob', [
   checkJwtRecruiter,
   jwtErrorHandler,
@@ -75,13 +75,6 @@ router.post('/postjob', [
       applyValue = '';
     }
 
-    let candidateRegionUpdated;
-    if (candidateRegion) {
-      candidateRegionUpdated = candidateRegion;
-    } else {
-      candidateRegionUpdated = 'Anywhere in the world';
-    }
-
     const planInMonths = Number(planType.split(' ')[0]);
     const planIndays = 30 * planInMonths + 1;
     const dateOfExpiry = new Date();
@@ -93,7 +86,7 @@ router.post('/postjob', [
       category,
       jobType,
       salary,
-      candidateRegionUpdated,
+      candidateRegion,
       applyType,
       applyValue,
       jobDescription,

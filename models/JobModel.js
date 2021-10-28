@@ -22,6 +22,7 @@ const JobSchema = mongoose.Schema({
   },
   candidateRegion: {
     type: String,
+    default: 'Anywhere in the world',
   },
   applyType: {
     type: String, // ATS/URL/EMAIL
