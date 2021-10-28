@@ -222,7 +222,7 @@ router.patch('/editjob/:id', [
     job.updatedBy = user;
 
     await job.save();
-    recruiterAppLogger('debug', `Job with position ${position} updated successfully by ${job.updatedBy}`);
+    recruiterAppLogger('debug', `Job with position ${job.position} updated successfully by ${job.updatedBy}`);
     res.json({
       status: 'SUCCESS',
       payload: {},

@@ -2,8 +2,8 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const serverPort = process.env.SERVER_PORT;
-const clientOriginUrl = process.env.CLIENT_ORIGIN_URL;
+// const serverPort = process.env.SERVER_PORT;
+// const clientOriginUrl = process.env.CLIENT_ORIGIN_URL;
 const audienceJobSeeker = process.env.AUTH0_AUDIENCE_JOBSEEKER;
 const audienceRecruiter = process.env.AUTH0_AUDIENCE_RECRUITER;
 const domainJobSeeker = process.env.AUTH0_DOMAIN_JOBSEEKER;
@@ -22,24 +22,24 @@ if (!domainJobSeeker || !domainRecruiter) {
   );
 }
 
-if (!serverPort) {
-  throw new Error(
-    '.env is missing the definition of a API_PORT environmental variable',
-  );
-}
+// if (!serverPort) {
+//   throw new Error(
+//     '.env is missing the definition of a API_PORT environmental variable',
+//   );
+// }
 
-if (!clientOriginUrl) {
-  throw new Error(
-    '.env is missing the definition of a APP_ORIGIN environmental variable',
-  );
-}
+// if (!clientOriginUrl) {
+//   throw new Error(
+//     '.env is missing the definition of a APP_ORIGIN environmental variable',
+//   );
+// }
 
-const clientOrigins = ['http://localhost:4040'];
+// const clientOrigins = ['http://localhost:4040'];
 
 module.exports = {
-  serverPort,
-  clientOriginUrl,
-  clientOrigins,
+  // serverPort,
+  // clientOriginUrl,
+  // clientOrigins,
   audienceJobSeeker,
   audienceRecruiter,
   domainJobSeeker,
