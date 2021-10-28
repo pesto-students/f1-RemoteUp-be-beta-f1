@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable consistent-return */
 // Post a Job
 // Edit a Job
@@ -435,6 +436,82 @@ router.get('/viewjobs', [
       message: {
         code: '500',
         details: 'Not able to post job server error',
+      },
+    });
+  }
+});
+
+/* Renew a Job by ID by Recruiter after login-in
+http://127.0.0.1:8000/recruiter/job/renewjob/6159622cce9274eec27b3a99
+request body: {
+    "planType": "3-month",
+} */
+router.patch('/renewjob/:id', [
+  checkJwtRecruiter,
+  jwtErrorHandler,
+  extractEmailPayload,
+], async (req, res) => {
+  try {
+    const { user } = req;
+    const { planType } = req.body;
+    const job = await Job.findById(req.params.id).catch((err) => {
+      if (err) {
+        recruiterAppLogger('error', `No Job with ID ${req.params.id} renew a job failed with Error: ${err}`);
+        res.json({
+          status: 'FAILURE',
+          payload: {},
+          message: {
+            code: '400',
+            details: 'No job found to renew',
+          },
+        });
+      }
+    });
+
+    if (job.createdBy.toLowerCase() !== user) {
+      res.json({
+        status: 'FAILURE',
+        payload: {},
+        message: {
+          code: '500',
+          details: 'User not authorized to renew job',
+        },
+      });
+    }
+
+    const { dateOfExpiry } = job;
+
+    const planInMonths = Number(planType.split(' ')[0]);
+    const planIndays = 30 * planInMonths + 1;
+    const newDateOfExpiry = dateOfExpiry;
+    newDateOfExpiry.setDate(newDateOfExpiry.getDate() + planIndays);
+    newDateOfExpiry.setHours(0, 0, 0, 0);
+
+    await Job.findByIdAndUpdate(job._id, {
+      active: true,
+      updatedBy: user,
+      planType,
+      dateOfExpiry: newDateOfExpiry,
+      dateOfPurchase: new Date(),
+    });
+
+    recruiterAppLogger('debug', `Job with position ${job.position} Renewed successfully by ${job.updatedBy}`);
+    res.json({
+      status: 'SUCCESS',
+      payload: {},
+      message: {
+        code: '200',
+        details: 'Job Renewed successfully',
+      },
+    });
+  } catch (err) {
+    recruiterAppLogger('error', `Error occured while renewing Job; Error: ${err.message}`);
+    res.json({
+      status: 'FAILURE',
+      payload: {},
+      message: {
+        code: '500',
+        details: 'Not able to renew job server error',
       },
     });
   }
