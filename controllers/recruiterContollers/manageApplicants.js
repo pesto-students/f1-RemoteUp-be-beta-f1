@@ -152,8 +152,8 @@ router.get('/viewapplications/:jobId', [
     const { user } = req;
     const { jobId } = req.params;
     let { pageNo, perPage } = req.query;
-    pageNo = Math.abs(parseInt(pageNo, 10));
-    perPage = Math.abs(parseInt(perPage, 10));
+    pageNo = Math.abs(parseInt(pageNo, 10)) || 1;
+    perPage = Math.abs(parseInt(perPage, 10)) || 1000;
 
     Application.find({ jobId })
     // .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])

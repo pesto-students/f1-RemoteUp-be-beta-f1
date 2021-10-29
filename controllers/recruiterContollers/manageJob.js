@@ -390,8 +390,8 @@ router.get('/viewjobs', [
   try {
     const { user } = req;
     let { pageNo, perPage } = req.query;
-    pageNo = Math.abs(parseInt(pageNo, 10));
-    perPage = Math.abs(parseInt(perPage, 10));
+    pageNo = Math.abs(parseInt(pageNo, 10)) || 1;
+    perPage = Math.abs(parseInt(perPage, 10)) || 1000;
 
     const totalActiveJobs = await Job.find({ createdBy: user, active: true }).count();
 

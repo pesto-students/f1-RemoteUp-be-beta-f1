@@ -187,8 +187,8 @@ router.get('/viewsavedjobs/', [
   try {
     const { user } = req;
     let { pageNo, perPage, searchKey } = req.query;
-    pageNo = Math.abs(parseInt(pageNo, 10));
-    perPage = Math.abs(parseInt(perPage, 10));
+    pageNo = Math.abs(parseInt(pageNo, 10)) || 1;
+    perPage = Math.abs(parseInt(perPage, 10)) || 1000;
 
     let filterQuery;
     if (searchKey) {
@@ -268,8 +268,8 @@ router.get('/viewappliedjobs/', [
   try {
     const { user } = req;
     let { pageNo, perPage, searchKey } = req.query;
-    pageNo = Math.abs(parseInt(pageNo, 10));
-    perPage = Math.abs(parseInt(perPage, 10));
+    pageNo = Math.abs(parseInt(pageNo, 10)) || 1;
+    perPage = Math.abs(parseInt(perPage, 10)) || 1000;
 
     let filterQuery;
     if (searchKey) {

@@ -16,8 +16,8 @@ http://127.0.0.1:8000/public/job/viewjobs/Software Development/?pageNo=1&perPage
 router.get('/viewjobs/:category/', async (req, res) => {
   try {
     let { pageNo, perPage, searchKey } = req.query;
-    pageNo = Math.abs(parseInt(pageNo, 10));
-    perPage = Math.abs(parseInt(perPage, 10));
+    pageNo = Math.abs(parseInt(pageNo, 10)) || 1;
+    perPage = Math.abs(parseInt(perPage, 10)) || 1000;
     const { category } = req.params;
 
     let totalJobs;

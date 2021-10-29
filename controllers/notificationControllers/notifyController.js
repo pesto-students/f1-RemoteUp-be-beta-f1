@@ -58,8 +58,8 @@ router.get('/viewnotifications/', [
   try {
     const { user } = req;
     let { pageNo, perPage } = req.query;
-    pageNo = Math.abs(parseInt(pageNo, 10));
-    perPage = Math.abs(parseInt(perPage, 10));
+    pageNo = Math.abs(parseInt(pageNo, 10)) || 1;
+    perPage = Math.abs(parseInt(perPage, 10)) || 1000;
 
     const totalNotificationObject = await Notification.find({ recipientId: user.toLowerCase() });
     const totalNotification = totalNotificationObject.length;
