@@ -9,6 +9,9 @@
 
 const express = require('express');
 const { check } = require('express-validator');
+const stripe = require("stripe")(
+  "sk_test_51JpykoSAQwW5QLe0DswGhxeNsXnLgMOnFNhJYT9WBWYrFuwfAhgRhGXxV0Deu578EZFgikfQakRF0ZKpVrifOsoC00jSYxUKI3"
+);
 const { checkJwtRecruiter, jwtErrorHandler } = require('../../middleware/authMiddleware');
 const extractEmailPayload = require('../../middleware/userEmailMiddleware');
 const Job = require('../../models/JobModel');
@@ -106,14 +109,47 @@ router.post('/postjob', [
 
     const jobData = await job.save();
     recruiterAppLogger('debug', `Job with position ${position} posted successfully by ${job.createdBy}`);
-    res.json({
-      status: 'SUCCESS',
-      payload: { jobData },
-      message: {
-        code: '200',
-        details: 'Job posted successfully',
-      },
-    });
+    
+      let price;
+      if (jobData.planType === "1 Month") {
+        price = 19900;
+      } else if (jobData.planType === "2 Month") {
+        price = 29900;
+      } else {
+        price = 39900;
+      }
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        customer_email: user,
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: jobData.position,
+                description:
+                  "Plan: " + jobData.planType + " JobID: " + jobData._id,
+              },
+              unit_amount: price,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        success_url: `http://localhost:3000/dashboard?session_id={CHECKOUT_SESSION_ID}&job_id=${jobData._id}`,
+        cancel_url: `http://localhost:3000/dashboard?session_id={CHECKOUT_SESSION_ID}&job_id=${jobData._id}`,
+      });
+    
+      res.json({
+        status: "SUCCESS",
+        payload: { jobData },
+        message: {
+          sessionURL: session.url,
+          sessionID: session.id,
+          code: "200",
+          details: "Job posted successfully",
+        },
+      });
   } catch (err) {
     recruiterAppLogger('error', `Error occured while posting Job; Error: ${err.message}`);
     res.json({
