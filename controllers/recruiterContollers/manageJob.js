@@ -136,8 +136,8 @@ router.post('/postjob', [
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:3000/dashboard?session_id={CHECKOUT_SESSION_ID}&job_id=${jobData._id}`,
-      cancel_url: `http://localhost:3000/dashboard?session_id={CHECKOUT_SESSION_ID}&job_id=${jobData._id}`,
+      success_url: `https://remote-up.netlify.app/dashboard?session_id={CHECKOUT_SESSION_ID}&job_id=${jobData._id}`,
+      cancel_url: `https://remote-up.netlify.app/dashboard?session_id={CHECKOUT_SESSION_ID}&job_id=${jobData._id}`,
     });
   
     res.json({
