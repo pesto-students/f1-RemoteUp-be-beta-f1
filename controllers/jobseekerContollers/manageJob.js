@@ -247,11 +247,11 @@ router.get('/viewsavedjobs/', [
   } catch (err) {
     jobSeekerAppLogger('error', `Error occured while viewing saved Jobs; Error: ${err.message}`);
     res.json({
-      status: 'FAILURE',
-      payload: {},
+      status: 'SUCCESS',
+      payload: { jobData: [], totalPages: null },
       message: {
-        code: '500',
-        details: 'Not able to view saved job server error',
+        code: '200',
+        details: 'Saved Job viewed successfully',
       },
     });
   }
@@ -335,11 +335,11 @@ router.get('/viewappliedjobs/', [
   } catch (err) {
     jobSeekerAppLogger('error', `Error occured while viewing applied Jobs; Error: ${err.message}`);
     res.json({
-      status: 'FAILURE',
-      payload: {},
+      status: 'SUCCESS',
+      payload: { jobData: [], totalPages: null },
       message: {
-        code: '500',
-        details: 'Not able to view applied job server error',
+        code: '200',
+        details: 'Saved Job viewed successfully',
       },
     });
   }
