@@ -224,11 +224,11 @@ router.get('/viewsavedjobs/', [
       .exec((err, jobs) => {
         if (err) {
           res.json({
-            status: 'FAILURE',
-            payload: {},
+            status: 'SUCCESS',
+            payload: { jobData: [] },
             message: {
-              code: '500',
-              details: 'Not able to view saved jobs server error',
+              code: '200',
+              details: 'Saved Job viewed successfully',
             },
           });
         }
@@ -312,11 +312,11 @@ router.get('/viewappliedjobs/', [
       .exec((err, jobs) => {
         if (err) {
           res.json({
-            status: 'FAILURE',
-            payload: {},
+            status: 'SUCCESS',
+            payload: { jobData: [] },
             message: {
-              code: '500',
-              details: 'Not able to view applied job server error',
+              code: '200',
+              details: 'Saved Job viewed successfully',
             },
           });
         }
