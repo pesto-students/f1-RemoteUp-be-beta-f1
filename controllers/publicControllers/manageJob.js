@@ -119,10 +119,22 @@ router.get('/homejobs/', async (req, res) => {
         { $sort: { category: -1, createdAt: -1 } }, // {category: []}
         {
           $project: {
+            active: 0,
+            salary: 0,
+            applyType: 0,
+            applyValue: 0,
+            jobDescription: 0,
+            jobDescriptionState: 0,
+            companyWebsite: 0,
+            logoFile: 0,
+            companyDescription: 0,
+            companyDescriptionState: 0,
             planType: 0,
             dateOfPurchase: 0,
             dateOfExpiry: 0,
             createdBy: 0,
+            updatedBy: 0,
+            updatedAt: 0,
             applications: 0,
           },
         },
