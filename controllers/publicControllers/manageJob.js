@@ -33,7 +33,26 @@ router.get('/viewjobs/:category/', async (req, res) => {
 
       totalJobs = await Job.find(filterQuery).count();
       jobData = await Job.find(filterQuery)
-        .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy', '-applications'])
+        .select([
+          "-active",
+          "-salary",
+          "-applyType",
+          "-applyValue",
+          "-jobDescription",
+          "-jobDescriptionState",
+          "-companyWebsite",
+          "-logoFile",
+          "-companyDescription",
+          "-companyDescriptionState",
+          "-planType",
+          "-dateOfPurchase",
+          "-dateOfExpiry",
+          "-createdBy",
+          "-updatedBy",
+          "-updatedAt",
+          "-applications",
+          "-__v",
+        ])
         .sort([['updatedAt', -1]])
         .limit(perPage)
         .skip(perPage * (pageNo - 1))
@@ -53,7 +72,26 @@ router.get('/viewjobs/:category/', async (req, res) => {
     } else {
       totalJobs = await Job.find({ active: true, category }).count();
       jobData = await Job.find({ active: true, category })
-        .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy', '-applications'])
+        .select([
+          "-active",
+          "-salary",
+          "-applyType",
+          "-applyValue",
+          "-jobDescription",
+          "-jobDescriptionState",
+          "-companyWebsite",
+          "-logoFile",
+          "-companyDescription",
+          "-companyDescriptionState",
+          "-planType",
+          "-dateOfPurchase",
+          "-dateOfExpiry",
+          "-createdBy",
+          "-updatedBy",
+          "-updatedAt",
+          "-applications",
+          "-__v",
+        ])
         .limit(perPage)
         .skip(perPage * (pageNo - 1))
         .catch((err) => {
@@ -136,6 +174,7 @@ router.get('/homejobs/', async (req, res) => {
             updatedBy: 0,
             updatedAt: 0,
             applications: 0,
+            __v: 0,
           },
         },
         {
@@ -194,7 +233,8 @@ http://127.0.0.1:8000/public/job/viewjob/615af78f535b7cc7a1fd0eee
 */
 router.get('/viewjob/:id', async (req, res) => {
   try {
-    const jobData = await Job.findById(req.params.id).catch((err) => {
+    const jobData = await Job.findById(req.params.id,
+      "_id companyLogo companyName companyWebsite position category jobType candidateRegion salary applyType applyValue companyDescription jobDescription createdAt").catch((err) => {
       if (err) {
         publicAppLogger('error', `No Job with ID ${req.params.id} view a job failed with Error: ${err}`);
         res.json({
