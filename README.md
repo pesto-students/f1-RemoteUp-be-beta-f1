@@ -57,8 +57,8 @@ We have integrated Stripe checkout. To post a job, you'll need to make a dummy p
 # Installation
 
 - Fork or directly clone this repository to your local machine
-- Use the `yarn` command to install dependencies
-- Once the dependencies are finished installing, use the `yarn start` command inside the root directory to run the backend application in your local machine
+- Use the `npm install` command to install dependencies
+- Once the dependencies are finished installing, use the `npm start` command inside the root directory to run the backend application in your local machine
 
 <br/>
 
