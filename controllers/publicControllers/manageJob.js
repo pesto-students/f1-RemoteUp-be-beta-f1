@@ -270,4 +270,57 @@ router.get('/viewjob/:id', async (req, res) => {
   }
 });
 
+/* View(Edit) a Job by public without login-in
+http://127.0.0.1:8000/public/job/editjob/615af78f535b7cc7a1fd0eee
+*/
+router.get("/editjob/:id", async (req, res) => {
+  try {
+    const jobData = await Job.findById(
+      req.params.id,
+      "_id companyLogo companyName companyWebsite position category jobType candidateRegion salary applyType applyValue companyDescription companyDescriptionState jobDescription jobDescriptionState createdAt"
+    ).catch((err) => {
+      if (err) {
+        publicAppLogger(
+          "error",
+          `No Job with ID ${req.params.id} view a job failed with Error: ${err}`
+        );
+        res.json({
+          status: "FAILURE",
+          payload: {},
+          message: {
+            code: "400",
+            details: "No job found to view",
+          },
+        });
+      }
+    });
+
+    publicAppLogger(
+      "debug",
+      `Job with ID ${jobData.id} viewed successfully by ${jobData.createdBy}`
+    );
+    res.json({
+      status: "SUCCESS",
+      payload: { jobData },
+      message: {
+        code: "200",
+        details: "Job posted successfully",
+      },
+    });
+  } catch (err) {
+    publicAppLogger(
+      "error",
+      `Error occured while updating Job; Error: ${err.message}`
+    );
+    res.json({
+      status: "FAILURE",
+      payload: {},
+      message: {
+        code: "500",
+        details: "Not able to post job server error",
+      },
+    });
+  }
+});
+
 module.exports = router;
