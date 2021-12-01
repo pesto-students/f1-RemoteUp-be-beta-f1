@@ -434,7 +434,8 @@ router.get('/viewjobs', [
     const totalJobs = await Job.find({ createdBy: user }).count();
     const totalPages = Math.ceil(totalJobs / perPage);
 
-    const jobData = await Job.find({ createdBy: user })
+    const jobData = await Job.find({ createdBy: user },
+      "_id position category jobType planType applyType createdAt applications")
       .limit(perPage)
       .skip(perPage * (pageNo - 1))
       .catch((err) => {

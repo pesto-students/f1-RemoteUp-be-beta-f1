@@ -155,7 +155,8 @@ router.get('/viewapplications/:jobId', [
     pageNo = Math.abs(parseInt(pageNo, 10)) || 1;
     perPage = Math.abs(parseInt(perPage, 10)) || 1000;
 
-    Application.find({ jobId })
+    Application.find({ jobId },
+      "_id userId jobId fullName email phone exp resume applicationStatus note createdAt")
     // .select(['-planType', '-dateOfPurchase', '-dateOfExpiry', '-createdBy', '-updatedBy'])
       .sort([['userExp', -1], ['updatedAt', -1]])
       .limit(perPage)
