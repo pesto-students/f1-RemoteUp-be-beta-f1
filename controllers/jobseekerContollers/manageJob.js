@@ -371,4 +371,48 @@ router.get('/viewappliedjobs/', [
   }
 });
 
+/* View Saved & Applied Jobs list by Job-Seeker after login-in
+http://127.0.0.1:8000/jobseeker/job/savedappliedjobslist/
+*/
+router.get(
+  "/savedappliedjobslist/",
+  [checkJwtJobSeeker, jwtErrorHandler, extractEmailPayload],
+  async (req, res) => {
+    try {
+      const { user } = req;
+
+      const totalJobsQuery = await User.findOne({ userId: user });
+
+      jobSeekerAppLogger(
+        "debug",
+        `Saved & Applied Jobs list viewed successfully by ${user}`
+      );
+      res.json({
+        status: "SUCCESS",
+        payload: {
+          savedJobs: totalJobsQuery.savedJobs,
+          appliedJobs: totalJobsQuery.appliedJobs,
+        },
+        message: {
+          code: "200",
+          details: "Saved & Applied Jobs list viewed successfully",
+        },
+      });
+    } catch (err) {
+      jobSeekerAppLogger(
+        "error",
+        `Error occured while viewing saved & applied Jobs list; Error: ${err.message}`
+      );
+      res.json({
+        status: "FAILURE",
+        payload: { savedJobs: [], appliedJobs: [] },
+        message: {
+          code: "500",
+          details: "Error occured while viewing saved & applied Jobs list",
+        },
+      });
+    }
+  }
+);
+
 module.exports = router;
