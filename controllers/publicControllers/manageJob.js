@@ -248,7 +248,7 @@ router.get('/viewjob/:id', async (req, res) => {
       }
     });
 
-    publicAppLogger('debug', `Job with ID ${jobData.id} viewed successfully by ${jobData.createdBy}`);
+    publicAppLogger('debug', `Job with ID ${jobData.id} viewed successfully`);
     res.json({
       status: 'SUCCESS',
       payload: { jobData },
@@ -277,7 +277,7 @@ router.get("/editjob/:id", async (req, res) => {
   try {
     const jobData = await Job.findById(
       req.params.id,
-      "_id companyLogo companyName companyWebsite position category jobType candidateRegion salary applyType applyValue companyDescription companyDescriptionState jobDescription jobDescriptionState createdAt"
+      "position category jobType candidateRegion salary applyType applyValue jobDescription jobDescriptionState companyName companyLogo logoFile companyWebsite companyDescription companyDescriptionState"
     ).catch((err) => {
       if (err) {
         publicAppLogger(
@@ -297,7 +297,7 @@ router.get("/editjob/:id", async (req, res) => {
 
     publicAppLogger(
       "debug",
-      `Job with ID ${jobData.id} viewed successfully by ${jobData.createdBy}`
+      `Job with ID ${jobData.id} viewed successfully`
     );
     res.json({
       status: "SUCCESS",

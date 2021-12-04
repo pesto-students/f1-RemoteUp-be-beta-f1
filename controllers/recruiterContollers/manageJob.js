@@ -201,7 +201,7 @@ router.patch('/editjob/:id', [
   // check('companyTagline', 'Invalid company tagline').optional().notEmpty(),
   check('companyLogo', 'Please attach company logo').optional().isURL(), // BE should store image
   // check('companyDescription', 'Invalid company about').optional().notEmpty(),
-  check('planType', 'Invalid planType').optional().isIn([ONE_MONTH, TWO_MONTH, THREE_MONTH, SIX_MONTH]),
+  // check('planType', 'Invalid planType').optional().isIn([ONE_MONTH, TWO_MONTH, THREE_MONTH, SIX_MONTH]),
 ], async (req, res) => {
   try {
     validationErrorCheck(req, res, 'editjob');
@@ -209,7 +209,7 @@ router.patch('/editjob/:id', [
     const {
       position, category, jobType, salary, candidateRegion, applyType, applyValue, jobDescription,
       companyName, companyWebsite, companyTagline, companyLogo, logoFile, companyDescription,
-      planType, jobDescriptionState, companyDescriptionState,
+      jobDescriptionState, companyDescriptionState,
     } = req.body;
 
     const job = await Job.findById(req.params.id).catch((err) => {
@@ -252,7 +252,7 @@ router.patch('/editjob/:id', [
     if (companyLogo) job.companyLogo = companyLogo;
     if (logoFile) job.logoFile = logoFile;
     if (companyDescription) job.companyDescription = companyDescription;
-    if (planType) job.planType = planType;
+    // if (planType) job.planType = planType;
     if (jobDescriptionState) job.jobDescriptionState = jobDescriptionState;
     if (companyDescriptionState) job.companyDescriptionState = companyDescriptionState;
     job.updatedBy = user;
